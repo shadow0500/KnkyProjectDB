@@ -1,0 +1,115 @@
+
+select 
+  users.first_name, 
+  users.last_name, 
+  users.display_name, 
+  post.post_text, 
+  post.post_img, 
+  post.post_video, 
+  post.posted_at, 
+  count( comment_on_post.commentId)as comment_count,
+  count(post.postId) as post_count,
+  count(likes_on_post.likeId) as likes_count
+
+ 
+from 
+  users 
+  inner join post on users.userId = post.posted_by
+  left join comment_on_post on post.postId = comment_on_post.postId
+  left join likes_on_post on post.postId = likes_on_post.postId
+
+  
+  group by 
+  users.first_name, 
+  users.last_name, 
+  users.display_name, 
+  post.post_text, 
+  post.post_img, 
+  post.post_video, 
+  post.posted_at, 
+  comment_on_post.commentId ,
+  likes_on_post.likeId
+  
+  
+ select 
+  users.first_name, 
+  users.last_name, 
+  users.display_name, 
+  post.post_text, 
+  post.post_img, 
+  post.post_video, 
+  post.posted_at, 
+
+  count(likes_on_post.likeId) as likes_count, 
+   count(post.postId) as post_count,
+  count(save_post.savepostId) as savepost_count 
+from 
+  users 
+  inner join post on users.userId = post.posted_by 
+  left join likes_on_post on post.postId = likes_on_post.postId 
+  left join save_post on post.postId = save_post.postId 
+group by 
+  users.first_name, 
+  users.last_name, 
+  users.display_name, 
+  post.post_text, 
+  post.post_img, 
+  post.post_video, 
+  post.posted_at, 
+ likes_on_post.likeId, 
+  save_post.savepostId
+
+  
+  select count(save_post.savepostId) from save_post where postId = 5;
+  select count(likes_on_post.likeId) from likes_on_post where postId = 2;
+  
+  select * from save_post;
+  select * from post ;
+  
+  select * from likes_on_post;
+  select * from users;
+  
+  select * from comment_on_post where postId = 2;
+  
+  
+  select postId,
+  count(likeId) as likes_count from likes_on_post group by postId ;
+  
+  
+  
+  
+  select 
+  users.first_name, 
+  users.last_name, 
+  users.display_name, 
+  story.story_text, 
+  story.story_img, 
+  story.story_video, 
+  story.storyPostedAt, 
+  count( comment_on_story.commentId)as comment_count,
+  count(story.storyId) as story_count,
+  count(likes_on_story.likeId) as likes_count
+
+ 
+from 
+  users 
+  inner join story on users.userId = story.story_shared_by
+  left join comment_on_story on story.storyId = story.storyId
+  left join likes_on_story on story.storyId = story.storyId
+
+  
+  group by 
+  users.first_name, 
+  users.last_name, 
+  users.display_name, 
+  story.story_text, 
+  story.story_img, 
+  story.story_video, 
+  story.storyPostedAt, 
+  comment_on_story.commentId ,
+  likes_on_story.likeId
+  
+  
+  
+  
+  

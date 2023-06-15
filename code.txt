@@ -1,0 +1,242 @@
+-- Registration Knky
+
+create table users(
+	userId bigserial primary key unique not null,
+	first_name varchar(200) not null,
+	last_name varchar(200) not null,
+	dob date not null,
+	display_name varchar(200) unique not null,
+	email varchar(50) unique not null,
+	password varchar(50) unique not null,
+	gender varchar(20) not null,
+	sexualIntersted varchar(200) not null,
+	topicAndlifestyle varchar(200) not null,
+	hashtag varchar(200) not null,
+	accountType varchar(200) not null
+);
+
+create table locations(
+	locationId bigserial primary key unique not null,
+	country varchar(200) not null,
+	city varchar(200) not null,
+	userlocationId bigint,
+	constraint fk_location_user foreign key(userlocationId)references users(userId)
+);
+
+
+-- Groups
+
+create table groupss(
+	groupId bigserial primary key unique not null,
+	group_name varchar(50) unique not null,
+	group_username varchar(50) unique not null,
+	group_topic varchar(20) not null,
+	group_description text not null,
+	group_links varchar(200) not null,
+	group_hashtag varchar(200) ,
+	group_subscriptionType varchar(50) not null,
+	group_subscriptionPrice int not null,
+	group_subscriptionValidity int not null,
+	group_createdBy bigint,
+	constraint fk_group_createdBy foreign key(group_createdBy)references users(userId)
+
+);
+
+-- HomePage Knky
+
+create table story(
+	storyId bigserial primary key unique not null,
+	story_img varchar(200),
+	story_text text,
+	story_video varchar(200),
+	story_shared_by bigint,
+	story_type smallint,
+	constraint fk_story_user foreign key(story_shared_by)references users(userId),
+    storyPostedAt timestamp
+);
+
+create table comment_on_story(
+	commentId bigserial primary key unique not null,
+	comment_text text,
+	storyId bigint,
+	comment_at timestamp,
+	modified_at timestamp,
+	constraint fk_comment_On_post foreign key(storyId)references story(storyId)
+	
+);
+
+
+create table likes_on_story(
+	likeID bigserial primary key unique not null,
+	storyId bigint,
+	liked_at timestamp,
+	constraint fk_like_On_post foreign key(storyId)references story(storyId)
+);
+
+create table shares_on_story(
+	shareId  bigserial primary key unique not null,
+	storyId bigint,
+	shared_at timestamp,
+	constraint fk_shared_by foreign key(storyId)references  story(storyId)
+	
+);
+
+
+create table post(
+	postId bigserial primary key unique not null,
+	post_img varchar(200),
+	post_text text,
+	post_video varchar(200),
+	posted_by bigint,
+	posted_at timestamp,
+	modified_at timestamp,
+	isDeleted boolean not null default false,
+	isFeautured boolean not null default false,
+	constraint fk_post_user foreign key(posted_by)references users(userId)
+);
+
+create table comment_on_post(
+	commentId bigserial primary key unique not null,
+	comment_text text,
+	postId bigint,
+	comment_at timestamp,
+	modified_at timestamp,
+	constraint fk_comment_On_post foreign key(postId)references post(postId)
+	
+);
+
+
+create table save_post(
+	savepostId bigserial primary key not null,
+	postId bigint,
+	saved_at timestamp
+);
+
+create table likes_on_post(
+	likeID bigserial primary key unique not null,
+	postId bigint,
+	liked_at timestamp,
+	constraint fk_like_On_post foreign key(postId)references post(postId)
+);
+
+
+create table shares_on_post(
+	shareId  bigserial primary key unique not null,
+	postId bigint,
+	shared_at timestamp,
+	constraint fk_shared_by foreign key(postId)references  post(postId)
+	
+);
+
+create table subscribe(
+	subscribeId  bigserial primary key unique not null,
+	subscribed_by bigint,
+	subscribed_to bigint,
+	subscribed_at timestamp,
+	unsubscribed_at timestamp,
+	constraint fk_subscribed_by foreign key(subscribed_by)references users(userId),
+	constraint fk_subscribed_to foreign key(subscribed_to)references users(userId)
+);
+
+create table follow(
+	followId bigserial primary key unique not null,
+	follow_by bigint,
+	follow_to bigint,
+	followed_at timestamp,
+	status varchar(200) not null,
+	constraint fk_follow_by foreign key(follow_by)references users(userId),
+	constraint fk_follow_to foreign key(follow_to)references users(userId)
+);
+
+
+
+-- Matches knky
+
+
+
+create table matches(
+	matchId bigserial primary key unique not null,
+	match_by bigint,
+	match_to bigint,
+	match_at timestamp,
+	status varchar(200) not null,
+	constraint fk_match_by foreign key(match_by)references users(userId),
+	constraint fk_match_to foreign key(match_to)references users(userId)
+);
+
+
+-- Events
+
+create table events(
+	eventId bigserial primary key unique not null,
+	event_title varchar(200) not null,
+	event_img varchar(200) not null,
+	event_video varchar(200),
+	event_description text not null,
+	event_date date not null,
+	event_time time not null,
+	ended_at timestamp,
+	started_at timestamp,
+	event_type varchar(50)not null,
+	event_restriction varchar(20),
+	eventCreated_by bigint,
+	constraint fk_eventCreated_by foreign key(eventCreated_by)references users(userId)
+);
+
+
+
+-- Channel
+
+create table channel(
+	channelId bigserial primary key unique not null,
+	channel_name varchar(200) unique not null,
+	channel_username varchar(200) unique not null,
+	channel_type varchar(200) not null,
+	channel_description text not null,
+	channel_link varchar(200) unique not null,
+	channel_hashtag varchar(200) ,
+	channel_createdBy bigint,
+	channel_created_at timestamp,
+	constraint fk_channel_createdBy foreign key(channel_createdBy)references users(userId)
+);
+
+create table channelSubscription(
+	subscriptionId bigserial primary key unique not null,
+	subscription_type varchar(200) not null,
+	subscription_price int not null,
+	subscription_validity varchar(50) not null,
+	subscribed_to bigint,
+	constraint fk_subscribed_to foreign key(subscribed_to)references channel(channelId)
+
+);
+
+-- New shop Item
+
+create table shop_item(
+	itemId bigserial primary key unique not null,
+	item_name varchar(200) not null,
+	brand_name varchar(200) not null,
+	description text not null,
+	item_variation varchar(50) not null,
+	item_size int not null,
+	item_sellType varchar(50) not null,
+	item_price int not null,
+	item_endTime date,
+	item_photos varchar(200) not null,
+	item_postedAt timestamp,
+	item_createdBy bigint,
+	constraint fk_item_createdBy foreign key(item_createdBy)references users(userId)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
